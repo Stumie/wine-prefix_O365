@@ -20,7 +20,8 @@ Before use, be aware of some known flaws:
 ## Variants
 There're two variants of the installation script:
 * one utilizes the [Office Deployment Tool (ODT)](https://support.microsoft.com/en-us/office/use-the-office-offline-installer-f0a85fe7-118f-41cb-a791-d59cef96ad1c#OfficePlans=signinorgid),
-* the other one uses the Retail installer file, which you can download via your [Microsoft account](https://account.microsoft.com/services/microsoft365/details) (Browser agent showing "Windows" as OS is required).
+* the other one uses the 32 bit Retail installer file, which you can download via your [private Microsoft account](https://account.microsoft.com/services/microsoft365/details) or [business Microsoft account](https://portal.office.com/account/?ref=MeControl#installs)
+  * On both it is required, that the browser agent is showing "Windows" as OS to the opened websites, otherwise the download won't be offered.
 ## Additional hints
 * Neither the ODT nor the Retail installer exe-file will be downloaded by the script. You have to download them beforehand.
 * I'd recommend using the Retail installer script, because O365 generally is pre-activated. The O365 installed via ODT probably cannot be activated, due to the missing login functionality already mentioned above.
