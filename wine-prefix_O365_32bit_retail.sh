@@ -5,7 +5,7 @@ if [ "$(id -u)" = "0" ]; then
   exit 1
 fi
 
-if (( $# != 5 )); then
+if (( $# != 7 )); then
   echo "Not all or too many parameters provided"
   exit 1
 fi
@@ -13,9 +13,11 @@ fi
 # Set variables
 DISTRIRELEASE=$1
 DISTRIVERSION=$2
-WINEPREFIXNAME=$3
-WINHTTPYESNO=$4
-WINESWSETUPPATH=$5
+WINEBRANCHNAME=$3
+WINEPREFIXNAME=$4
+WINENATIVENESS=$5
+WINHTTPYESNO=$6
+WINESWSETUPPATH=$7
 
 WINEPREFIXPATH=~/.wine-prefix/$WINEPREFIXNAME
 WINEARCH=win32
@@ -26,12 +28,19 @@ sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install sudo vim gcc make perl wget dos2unix software-properties-common -y
 cd ~
+sudo apt-get update
 wget -nc https://dl.winehq.org/wine-builds/winehq.key
 sudo mv winehq.key /usr/share/keyrings/winehq-archive.key
 wget -nc https://dl.winehq.org/wine-builds/$DISTRIRELEASE/dists/$DISTRIVERSION/winehq-$DISTRIVERSION.sources
 sudo mv winehq-$DISTRIVERSION.sources /etc/apt/sources.list.d/
-sudo apt-get update
-sudo apt-get install --install-recommends winehq-devel -y
+
+if [ $WINEBRANCHNAME = 'stable' ] || [ $WINEBRANCHNAME = 'staging' ] || [ $WINEBRANCHNAME = 'devel' ]; then
+  sudo apt-get install --install-recommends winehq-$WINEBRANCHNAME -y
+else 
+  echo "ABORT: Provide valid winebranch statement within script parameters"
+  exit 1
+fi
+
 sudo apt-get install winetricks cabextract -y
 sudo apt-get install p11-kit p11-kit-modules winbind samba smbclient -y
 
@@ -45,10 +54,24 @@ mkdir -p $WINEPREFIXPATH
 WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH wineboot -i
 
 # Install Dependencies within Wine prefix via Winetricks
-# Minimal set of winetricks
-#WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winetricks -q win7 msxml3 msxml6 riched20 riched30
-# Compatibility set of winetricks
-WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winetricks -q win7 corefonts urlmon msxml3 msxml6 riched20 riched30 gdiplus
+case $WINENATIVENESS in
+  'level=1')
+    # Minimal set of winetricks
+    WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winetricks -q win7 msxml3 msxml6 riched20 riched30
+    ;;
+  'level=2')
+    # Compatibility set of winetricks
+    WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winetricks -q win7 corefonts urlmon msxml3 msxml6 riched20 riched30 gdiplus
+    ;;
+  'level=3')
+    # More native set of winetricks
+    WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winetricks -q win7 corefonts urlmon msxml3 msxml6 riched20 riched30 gdiplus msftedit dotnet20 dotnet48 vcrun2019
+    ;;
+  *)
+    echo "ABORT: Provide valid nativeness level statement within script parameters"
+    exit 1
+    ;;
+esac
 
 # Workaround: While winhttp seems to be necessary in some constellations, it seems to also break the installation in others.
 # This offers an option to choose within the parameters, so without editing the script itself.
@@ -57,7 +80,7 @@ if [ $WINHTTPYESNO = 'winhttp=yes' ]; then
 elif [ $WINHTTPYESNO = 'winhttp=no' ]; then
   break
 else 
-  echo "ABORT: Provide correct winhttp statement within script parameters"
+  echo "ABORT: Provide valid winhttp statement within script parameters"
   exit 1
 fi
 
@@ -82,7 +105,7 @@ rm ~/import.reg
 WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH wineboot -u
 WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH wineboot -r
 
-# Make sure Wine prefix is set to Windows 10 before setup
+# Make sure Wine prefix is set to Windows 10 before first setup
 WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winecfg -v win10
 
 printf '%s\n' "------------------------------------------------------------"
