@@ -65,7 +65,7 @@ case $WINENATIVENESS in
     ;;
   'level=3')
     # More native set of winetricks
-    WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winetricks -q win7 corefonts urlmon msxml3 msxml6 riched20 riched30 gdiplus msftedit dotnet20 dotnet48 vcrun2019
+    WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winetricks -q win7 corefonts urlmon msxml3 msxml6 riched20 riched30 gdiplus msftedit dotnet20 dotnet472 vcrun2019
     ;;
   *)
     echo "ABORT: Provide valid nativeness level statement within script parameters"
