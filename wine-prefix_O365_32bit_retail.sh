@@ -132,10 +132,6 @@ done
 # Make sure Wine prefix is set back to Windows 7 after setup
 WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH winecfg -v win7
 
-# Workaround: Symlink creation seems to be broken during installation, which is the reason, why DLLs have to be copied manually.
-cp -fv $WINEPREFIXPATH/drive_c/Program\ Files/Common\ Files/Microsoft\ Shared/ClickToRun/*.dll $WINEPREFIXPATH/drive_c/Program\ Files/Microsoft\ Office/root/Office1*/
-cp -fv $WINEPREFIXPATH/drive_c/Program\ Files/Common\ Files/Microsoft\ Shared/ClickToRun/*.dll $WINEPREFIXPATH/drive_c/Program\ Files/Microsoft\ Office/root/Client
-
 # Start Office setup for the second run
 WINEPREFIX=$WINEPREFIXPATH WINEARCH=$WINEARCH wine $WINESWSETUPPATH
 
@@ -152,6 +148,10 @@ while [ true ] ; do
     printf '%s\n' "------------------------------------------------------------"
   fi
 done
+
+# Workaround: Symlink creation seems to be broken during installation, which is the reason, why DLLs have to be copied manually.
+cp -fv $WINEPREFIXPATH/drive_c/Program\ Files/Common\ Files/Microsoft\ Shared/ClickToRun/*.dll $WINEPREFIXPATH/drive_c/Program\ Files/Microsoft\ Office/root/Office1*/
+cp -fv $WINEPREFIXPATH/drive_c/Program\ Files/Common\ Files/Microsoft\ Shared/ClickToRun/*.dll $WINEPREFIXPATH/drive_c/Program\ Files/Microsoft\ Office/root/Client
 
 printf '%s\n' "------------------------------------------------------------"
 printf '%s\n' "Script finished."

@@ -33,6 +33,7 @@ sudo mv winehq.key /usr/share/keyrings/winehq-archive.key
 wget -nc https://dl.winehq.org/wine-builds/$DISTRIRELEASE/dists/$DISTRIVERSION/winehq-$DISTRIVERSION.sources
 sudo mv winehq-$DISTRIVERSION.sources /etc/apt/sources.list.d/
 sudo apt-get update
+
 if [ $WINEBRANCHNAME = 'stable' ] || [ $WINEBRANCHNAME = 'staging' ] || [ $WINEBRANCHNAME = 'devel' ]; then
   sudo apt-get install --install-recommends winehq-$WINEBRANCHNAME -y
 else 
